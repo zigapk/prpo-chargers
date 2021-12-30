@@ -1,0 +1,7 @@
+.idea
+conf/
+logs/
+chargers
+/docs/swagger.json
+/docs/swagger.yaml
+/docs/docs.go

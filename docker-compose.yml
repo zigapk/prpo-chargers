@@ -1,0 +1,25 @@
+version: "3"
+services:
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=prpo-chargers
+      - POSTGRES_PASSWORD=rootroot
+    volumes:
+      - /home/chargers/db:/var/lib/posrgresql/data
+    restart: always
+  backend:
+    image: docker.recompile.it/zigapk/prpo-chargers
+    environment:
+      - AUTH_DATABASE_HOST=db
+      - AUTH_DATABASE_USER=prpo-chargers
+      - AUTH_DATABASE_PASSWORD=rootroot
+      - AUTH_DATABASE_DB_NAME=prpo-chargers
+    ports:
+      - "8001:8001"
+    volumes:
+      - /home/chargers/logs:/app/logs
+      - /home/chargers/conf:/app/conf
+    depends_on:
+      - db
+    restart: always
