@@ -1,14 +1,13 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/urfave/cli/v2"
 	"github.com/zigapk/prpo-chargers/internal/cmd"
 	"github.com/zigapk/prpo-chargers/internal/config"
 	"github.com/zigapk/prpo-chargers/internal/database"
 	"github.com/zigapk/prpo-chargers/internal/logger"
+	"log"
+	"os"
 )
 
 // @title        PRPO Chargers API

@@ -3,6 +3,7 @@ package charger
 import (
 	"fmt"
 	"github.com/zigapk/prpo-chargers/internal/gmaps"
+	"github.com/zigapk/prpo-chargers/internal/models/reservation"
 	"time"
 
 	"github.com/zigapk/prpo-chargers/internal/database"
@@ -99,4 +100,16 @@ func Page(offset int, limit int) ([]*Charger, error) {
 	}
 
 	return chargers, nil
+}
+
+func (c *Charger) ReservationsPage(offset int, limit int) ([]*reservation.Reservation, error) {
+	var reservations []*reservation.Reservation
+
+	query := `SELECT * FROM reservations WHERE charger_id = $1 OFFSET $2 LIMIT $3`
+	err := database.DB.Select(&reservations, query, c.ID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservations, nil
 }

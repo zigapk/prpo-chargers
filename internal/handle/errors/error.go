@@ -13,6 +13,10 @@ var (
 		StatusCode: http.StatusBadRequest,
 		Code:       "invalid_json",
 	}
+	CollidingReservation = ResponseError{
+		StatusCode: http.StatusBadRequest,
+		Code:       "colliding_reservation",
+	}
 
 	InvalidCredentials = ResponseError{
 		StatusCode: http.StatusBadRequest,
