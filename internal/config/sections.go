@@ -92,6 +92,11 @@ func (s server) AuthServiceUrl() string {
 	return val
 }
 
+func (s server) GmapsApiKey() string {
+	val, _ := cfg.GetString("server", "gmaps_api_key")
+	return val
+}
+
 var (
 	Logs     = logs{}
 	Server   = server{}

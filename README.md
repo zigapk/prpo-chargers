@@ -7,7 +7,7 @@ This repository contains a source code for chargers microservice used in a demo 
 Run a development database via Docker:
 
 ```shell
-docker run -p 5432:5432 \
+docker run -p 5433:5432 \
     -e POSTGRES_USER=prpo-chargers \
     -e POSTGRES_PASSWORD=rootroot \
     -v prpo-chargers:/var/lib/postgresql/data \

@@ -8,12 +8,12 @@ import (
 
 func apiRoutes() []Route {
 	return []Route{
-		//{
-		//	Name:           "chargers",
-		//	Path:           "/chargers",
-		//	AuthorizedOnly: false,
-		//	GET:            http.HandlerFunc(handle.GetChargersHandle),
-		//},
+		{
+			Name:           "chargers",
+			Path:           "/chargers",
+			AuthorizedOnly: true,
+			GET:            http.HandlerFunc(handle.GetChargersHandle),
+		},
 		{
 			Name: "liveness_probe",
 			Path: "/health/liveness",

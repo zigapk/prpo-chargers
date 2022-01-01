@@ -1,6 +1,8 @@
 package charger
 
 import (
+	"fmt"
+	"github.com/zigapk/prpo-chargers/internal/gmaps"
 	"time"
 
 	"github.com/zigapk/prpo-chargers/internal/database"
@@ -8,14 +10,15 @@ import (
 )
 
 type Charger struct {
-	ID int `db:"id"`
+	ID int `json:"id" db:"id"`
 
-	Name string `db:"name"`
+	Name    string `json:"name" db:"name"`
+	Address string `json:"address"`
 
-	Lat float64 `db:"lat"`
-	Lon float64 `db:"lon"`
+	Lat float64 `json:"lat" db:"lat"`
+	Lon float64 `json:"lon" db:"lon"`
 
-	DateCreated time.Time `db:"date_created"`
+	DateCreated time.Time `json:"date_created" db:"date_created"`
 }
 
 // New charger with a given username and password.
@@ -23,7 +26,7 @@ func New(name string, lat float64, lon float64) (*Charger, error) {
 	// Insert charger to database.
 	c := &Charger{}
 	insert := `INSERT INTO chargers (name, lat, lon) VALUES ($1, $2, $3) RETURNING *`
-	err := database.DB.Get(c, insert, name, lat, lon)
+	err := database.DB.Get(c, insert, name, fmt.Sprintf("%f", lat), fmt.Sprintf("%f", lon))
 
 	// Handle errors.
 	if err != nil {
@@ -76,4 +79,24 @@ func (c *Charger) Update(name string, lat float64, lon float64) error {
 	}
 
 	return nil
+}
+
+func Page(offset int, limit int) ([]*Charger, error) {
+	var chargers []*Charger
+
+	query := `SELECT * FROM chargers OFFSET $1 LIMIT $2`
+	err := database.DB.Select(&chargers, query, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range chargers {
+		addr, err := gmaps.GetAddressFromCoordinates(chargers[i].Lat, chargers[i].Lon)
+		if err != nil {
+			return nil, err
+		}
+		chargers[i].Address = addr
+	}
+
+	return chargers, nil
 }
