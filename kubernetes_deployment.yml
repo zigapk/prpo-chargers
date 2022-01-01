@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prpo-chargers-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prpo-chargers
+  template:
+    metadata:
+      labels:
+        app: prpo-chargers
+    spec:
+      containers:
+        - name: prpo-chargers
+          image: zigapk/prpo-chargers:latest
+          env:
+            - name: PRPOCHARGERS_SERVER_PORT
+              value: "8080"
+            - name: PRPOCHARGERS_SERVER_AUTH_SERVICE_URL
+              value: http://prpo-auth:80
+            - name: PRPOCHARGERS_DATABASE_HOST
+              value: prpo-do-user-1433005-0.b.db.ondigitalocean.com
+            - name: PRPOCHARGERS_DATABASE_PORT
+              value: "25060"
+            - name: PRPOCHARGERS_DATABASE_DB_NAME
+              value: prpo-chargers
+            - name: PRPOCHARGERS_DATABASE_SSL_MODE
+              value: require
+            - name: PRPOCHARGERS_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-user-pass-chargers
+                  key: username
+            - name: PRPOCHARGERS_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-user-pass-chargers
+                  key: password
+            - name: PRPOCHARGERS_SERVER_GMAPS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gmaps-api
+                  key: api_key
+          ports:
+            - containerPort: 8080
+              name: server
+              protocol: TCP
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: server
+            initialDelaySeconds: 10
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: server
+            initialDelaySeconds: 10
+            periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prpo-chargers
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: prpo-chargers
