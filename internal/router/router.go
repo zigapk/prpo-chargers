@@ -41,9 +41,6 @@ func addRoute(router *mux.Router, r Route) {
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter()
-	// router.HandleFunc("/asdfasdf", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Println("otle neki dela")
-	// })
 
 	for _, r := range apiRoutes() {
 		addRoute(router, r)
